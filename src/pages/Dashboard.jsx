@@ -471,9 +471,9 @@ const ACCENT = {
 function StatCard({ label, value, accent }) {
   const a = ACCENT[accent]
   return (
-    <div className={`border rounded-2xl p-5 ${a.bg} ${a.border}`}>
-      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600 mb-2">{label}</p>
-      <p className={`text-3xl font-bold ${a.text}`}>{value}</p>
+    <div className={`border rounded-2xl p-3 sm:p-5 ${a.bg} ${a.border}`}>
+      <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600 mb-1 sm:mb-2">{label}</p>
+      <p className={`text-2xl sm:text-3xl font-bold ${a.text}`}>{value}</p>
     </div>
   )
 }

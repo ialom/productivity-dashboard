@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
 import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
@@ -8,18 +8,19 @@ import DailyPlan from './pages/DailyPlan'
 export default function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+      <Router>
+        <div className="min-h-dvh bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100">
           <Navbar />
-          <main>
+          {/* pb accounts for Android gesture-navigation bar */}
+          <main className="pb-[env(safe-area-inset-bottom)]">
             <Routes>
-              <Route path="/"          element={<Dashboard />} />
-              <Route path="/add-task"  element={<AddTask />} />
+              <Route path="/"           element={<Dashboard />} />
+              <Route path="/add-task"   element={<AddTask />} />
               <Route path="/daily-plan" element={<DailyPlan />} />
             </Routes>
           </main>
         </div>
-      </BrowserRouter>
+      </Router>
     </ThemeProvider>
   )
 }

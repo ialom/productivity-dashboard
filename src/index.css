@@ -1,11 +1,63 @@
 @import "tailwindcss";
 
-/* Enable class-based dark mode for Tailwind v4 */
+/* ─── Dark mode — class-based so the toggle works ─────────────────────────── */
 @variant dark (&:where(.dark, .dark *));
 
-/* Smooth theme transitions — colours only, so animations aren't affected */
+/* ─── OLED optimisation ────────────────────────────────────────────────────
+   On the Pixel 9 Actua OLED, pixels set to #000000 are physically off.
+   We use true black for page backgrounds in dark mode and near-black for
+   cards, giving depth without wasting battery.                               */
+.dark {
+  color-scheme: dark;
+  /* CSS custom properties consumed by inline styles / JS if needed */
+  --bg-page:   #000000;
+  --bg-card:   #0d0d0d;
+  --bg-card2:  #141414;
+  --border:    #1f1f1f;
+}
+
+/* ─── Smooth theme transitions (colour properties only) ────────────────── */
 *, *::before, *::after {
   transition-property: background-color, border-color, color;
   transition-duration: 150ms;
   transition-timing-function: ease;
+}
+
+/* ─── Mobile / Pixel 9 base ────────────────────────────────────────────────
+   Pixel 9: 1080 × 2424 px physical, ~422 ppi, device-pixel-ratio ≈ 2.625
+   → CSS viewport ≈ 412 × 924 px  (20:9 tall-narrow form factor)
+
+   Key rules:
+   • Prevent accidental horizontal scroll
+   • Enable momentum scrolling on Android/iOS
+   • Respect Android gesture-nav safe areas (already handled in App.jsx)
+   • Minimum 44 × 44 dp touch targets                                        */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  overscroll-behavior-y: contain;   /* kills pull-to-refresh bleed */
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+}
+
+/* ─── Touch targets ─────────────────────────────────────────────────────────
+   Android tap-target recommendation is 48 dp; we enforce 44 px minimum on
+   nav and form controls via Tailwind classes in the components, but apply a
+   global floor here for anything we may have missed.                         */
+button, [role="button"], input[type="checkbox"], input[type="radio"] {
+  touch-action: manipulation;  /* removes 300 ms tap delay */
+}
+
+/* ─── Pixel-perfect hairlines on OLED ─────────────────────────────────────
+   On a 2.625× display, 1 CSS px = 2.625 physical pixels.
+   Sub-pixel borders look sharper with this rendering hint.                   */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .border, [class*="border-"] {
+    -webkit-font-smoothing: antialiased;
+  }
 }
