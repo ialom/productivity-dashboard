@@ -2,37 +2,61 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
-
-  # Allow manual runs from the Actions tab
+    branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build
         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+5. Click **Commit changes** → commit directly to main
+
+---
+
+### Then delete the old `gh-pages` branch (optional but clean)
+
+Go to your repo → **Code** tab → click the branch dropdown → find `gh-pages` → delete it.
+
+---
+
+### Watch it run
+
+Go to **Actions** tab — a new workflow will trigger. Once green ✅, go to **Settings → Pages** and the URL will be shown there. Should be live at:
+```
+https://ialom.github.io/productivity-dashboard/
